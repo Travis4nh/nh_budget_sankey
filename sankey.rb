@@ -1,5 +1,9 @@
 #!/usr/bin/env ruby
 
+# usage:
+#    ./sankey.rb > sankey_data.txt
+#
+
 require 'csv'
 
 # Example of parsing a CSV file
@@ -47,3 +51,10 @@ CSV.foreach(csv_file_path, headers: headers) do |row|
 
   
 end
+
+
+file = File.open("./sankey_display_settings.txt", "r")
+contents = file.read
+
+puts contents
+
