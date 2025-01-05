@@ -21,7 +21,7 @@ This tool can generate a (Sankey digram)[https://en.wikipedia.org/wiki/Sankey_di
 To do so:
 
 1. `rake sankey > nh_budget_for_sankey.txt`
-2. go (here)[https://sankeymatic.com/build/] and upload the file generated in step 1
+2. go [here](https://sankeymatic.com/build/) and upload the file generated in step 1
 
 # Analyze the budget looking for weird outliers
 
@@ -55,7 +55,7 @@ budget on this.
 
 # Authorship
 
-This package was written by (Travis Corcoran)[https://en.wikipedia.org/wiki/Travis_Corcoran].  I am a state rep in NH and you can find me on twitter at (@travis4nh)[https://x.com/travis4nh].
+This package was written by [Travis Corcoran](https://en.wikipedia.org/wiki/Travis_Corcoran).  I am a state rep in NH and you can find me on twitter at [@travis4nh](https://x.com/travis4nh).
 
 # Licensing
 
@@ -63,10 +63,10 @@ This package is not yet licensed.  I'll almost certainly open source it.
 
 # Canonical location
 
-(https://github.com/Travis4nh/nh_budget_sankey)[https://github.com/Travis4nh/nh_budget_sankey]
+[https://github.com/Travis4nh/nh_budget_sankey](https://github.com/Travis4nh/nh_budget_sankey)
 
 # Bug reports and feature requests
 
-Please feel free to (create a ticket)[https://github.com/Travis4nh/nh_budget_sankey/issues].
+Please feel free to [create a ticket](https://github.com/Travis4nh/nh_budget_sankey/issues).
 
 
