@@ -1,7 +1,7 @@
 
 This is a tool that can be used to analyze the NH state budget.
 
-It has two modes of operation (discussed below).
+It has several modes of operation (discussed below).
 
 # Installation
 
@@ -19,8 +19,9 @@ It has two modes of operation (discussed below).
 
 Steps 3 and 4 have already been done for you, and the CSV file is included as part of this package.
 
-# Generating a Sankey diagram
+# Use
 
+## Generating a Sankey diagram
 
 This tool can generate a (Sankey digram)[https://en.wikipedia.org/wiki/Sankey_diagram].
 
@@ -29,7 +30,7 @@ To do so:
 1. `rake sankey > nh_budget_for_sankey.txt`
 2. go [here](https://sankeymatic.com/build/) and upload the file generated in step 1
 
-# Analyze the budget looking for weird outliers
+## Analyze the budget looking for weird outliers
 
 1. `rake analyze`
 
@@ -57,6 +58,18 @@ e.g.
 shows that the average department spends 1.28% of its budget on
 holiday pay, but the Pease Development Authority spends 51.79% of its
 budget on this.
+
+## Analyze departments
+
+This option is the reverse of "analyzing by categories" (above).  This analyzes by department.
+
+For each department, break down how it spends money.
+
+Also generate piecharts per department.
+
+## Find alarming headcount numbers
+
+`rake headcount`
 
 
 # Authorship

@@ -43,7 +43,7 @@ def populate_flow_data
     activity = row['Activity']
     spending_class = row['Class']
 
-    if row['Record Type'] == "Expense"
+    if ["Expense", "Position"].include?(row['Record Type']) 
       $spending_classes.add(spending_class)
       
 
@@ -74,7 +74,20 @@ def output_flow_data
   end
 end
 
-def scale_depts
+def find_personnel_placeholders
+  $flows.each_pair do |src, details|
+    details.each_pair do |dest, amt|
+      if $spending_classes.include?(dest)
+        if amt < 1000 && amt > 0 && ["059-Temp Full Time","FTE1-Permanent Classified","FTE2-Unclassified Positions"].include?(dest)
+         puts "#{src} / #{dest} = #{amt}"
+        end
+      end
+    end
+  end
+end
+
+def calculate_class_percents
+
 
   # puts "$spending_classes = #{$spending_classes.inspect}"
   
@@ -185,7 +198,7 @@ end
 
 task :sankey do
   populate_flow_data
-  write_sankey_file
+  # write_sankey_file
   
   file = File.open("./sankey_display_settings.txt", "r")
   contents = file.read
@@ -194,8 +207,11 @@ end
 
 task :analyze do
   populate_flow_data
-  scale_depts
   calculate_class_percents
+end
+
+task :headcount do
+  find_personnel_placeholders
 end
 
 task :department do
