@@ -86,9 +86,7 @@ def find_personnel_placeholders
   end
 end
 
-def calculate_class_percents
-
-
+def scale_depts
   # puts "$spending_classes = #{$spending_classes.inspect}"
   
   departments = Hash.new{ |hash, key| hash[key] = Hash.new(0) }
@@ -169,7 +167,7 @@ def print_dept_percents
   end  
 
   $departments_scaled.each_pair do |dept, hh|
-    filename_base = "/tmp/" + dept.gsub(/[ &:]/, "-").gsub(/-+/, "-").downcase
+    filename_base = "/tmp/" + dept.gsub(/[ &:']/, "-").gsub(/-+/, "-").downcase
 
     filename_pie = filename_base + ".pie"
     file = File.open(filename_pie, "w")
@@ -182,6 +180,7 @@ def print_dept_percents
     filename_annotated = filename_base + ".png"
     
     pie_cmd = "piechart  --percent  --order value,legend --color contrast #{filename_pie} > #{filename_svg}"
+    # puts "pie_cmd = #{pie_cmd}"
     `#{pie_cmd}`
     convert_cmd = "convert #{filename_svg} -gravity north -extent 900x700 -pointsize 50 -fill black  -annotate +0+600 \"#{dept.downcase}\"  #{filename_annotated}"
     `#{convert_cmd}`
