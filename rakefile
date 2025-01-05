@@ -150,7 +150,7 @@ task :sankey do
   puts contents
 end
 
-task :percents do
+task :analyze do
   populate_flow_data
   calculate_class_percents
 
