@@ -42,7 +42,7 @@ percentile spending in this cost category.
 e.g.
 
 ```
----- 019-Holiday Pay avg = 1.28%, std_dev = 0.07 
+---- 019-Holiday Pay avg = 1.28%, std_dev = 7.00 points 
   * 51.79% +  8 std devs    013-PEASE DEVELOPMENT AUTHORITY
   *  4.95% +  1 std devs    046-CORRECTIONS DEPT
   *  4.53% +  1 std devs    043-VETERANS HOME
@@ -63,13 +63,15 @@ budget on this.
 
 This option is the reverse of "analyzing by categories" (above).  This analyzes by department.
 
-For each department, break down how it spends money.
+For each department, break down how it spends money (and prints it to std out)
 
-Also generate piecharts per department.
+Also generates on piechart per department and writes it to `/tmp`.
+
+1. `rake department`
 
 ## Find alarming headcount numbers
 
-`rake headcount`
+1. `rake headcount`
 
 
 # Authorship
