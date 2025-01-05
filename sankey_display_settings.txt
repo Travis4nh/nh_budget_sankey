@@ -3,8 +3,8 @@
 
 // === Settings ===
 
-size w 900
-  h 1200
+size w 3000
+  h 8000
 margin l 12
   r 12
   t 18
