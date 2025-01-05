@@ -13,8 +13,8 @@ It has several modes of operation (discussed below).
 1. `cd piedchart`
 1. `make`
 1. `make install`
-1. cd ..
-1. download an excel file for a budget from (here)[https://www.das.nh.gov/budget/]
+1. `cd ..`
+1. download an excel file for a budget from [here](https://www.das.nh.gov/budget/)
 1. open the excel file in OpenOffice or similar and export as a CSV.
 
 Steps 3 and 4 have already been done for you, and the CSV file is included as part of this package.
@@ -23,7 +23,7 @@ Steps 3 and 4 have already been done for you, and the CSV file is included as pa
 
 ## Generating a Sankey diagram
 
-This tool can generate a (Sankey digram)[https://en.wikipedia.org/wiki/Sankey_diagram].
+This tool can generate a [Sankey digram](https://en.wikipedia.org/wiki/Sankey_diagram).
 
 To do so:
 
