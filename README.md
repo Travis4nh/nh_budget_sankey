@@ -7,9 +7,15 @@ It has two modes of operation (discussed below).
 
 
 1. Download or git clone this package.
-2. make sure you have ruby installed (`sudo apt-get install ruby` on Ubuntu)
-3. download an excel file for a budget from (here)[https://www.das.nh.gov/budget/]
-4. open the excel file in OpenOffice or similar and export as a CSV.
+1. make sure you have ruby installed (`sudo apt-get install ruby` on Ubuntu)
+1. make sure you have image magick installed (`sudo apt-get install imagemagick` on Ubuntu)
+1. `git clone git@github.com:cbdevnet/piechart.git`
+1. `cd piedchart`
+1. `make`
+1. `make install`
+1. cd ..
+1. download an excel file for a budget from (here)[https://www.das.nh.gov/budget/]
+1. open the excel file in OpenOffice or similar and export as a CSV.
 
 Steps 3 and 4 have already been done for you, and the CSV file is included as part of this package.
 

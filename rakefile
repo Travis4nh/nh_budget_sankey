@@ -23,6 +23,7 @@ end
 
 $flows = Hash.new{ |hash, key| hash[key] = Hash.new(0) }
 $spending_classes = Set.new
+$departments_scaled = Hash.new
 
 def add_flow(source, dest, amt)
   $flows[source][dest] += amt
@@ -73,7 +74,7 @@ def output_flow_data
   end
 end
 
-def calculate_class_percents
+def scale_depts
 
   # puts "$spending_classes = #{$spending_classes.inspect}"
   
@@ -91,7 +92,7 @@ def calculate_class_percents
 
   # puts "departments = #{departments.inspect}"
 
-  departments_scaled = Hash.new
+  $departments_scaled = Hash.new
 
   departments.each_pair do |dept, hh|
 
@@ -105,9 +106,15 @@ def calculate_class_percents
     # scaled_h[:total] = total
     # puts "scaled = #{scaled_h.inspect}"
 
-    departments_scaled[dept] = scaled_h
+    $departments_scaled[dept] = scaled_h
     
   end
+end
+
+# Look at data from the spending-class perspective (e.g. IT, overtime, out-of-state travel, etc.)
+# For each spending category, report on which departments
+#
+def calculate_class_percents
 
   $spending_classes.to_a.sort.each do |sp_class|
 
@@ -120,7 +127,7 @@ def calculate_class_percents
     std_dev = variance_array.size == 0 ? 0 :   Math.sqrt(variance_array.sum { |v| v ** 2} / variance_array.size)
 
     
-    puts "---- #{sp_class} avg = #{sprintf("%3.2f", avg * 100)}%, std_dev = #{sprintf("%2.2f", std_dev)} "
+    puts "---- #{sp_class} avg = #{sprintf("%3.2f", avg * 100)}%, std_dev = #{sprintf("%2.2f", std_dev * 100)} percentage pts "
 
     if arr.reject { |k, v| v == 0.0 }.length < 3
       puts "skipped bc too few"
@@ -131,12 +138,47 @@ def calculate_class_percents
 
 
     arr[0,10].each do |pair|
-      devs = pair[1] / std_dev
+      devs = (pair[1] - avg) / std_dev
       puts "  * #{sprintf("%5.2f", pair[1] * 100) }% + #{ sprintf("%2.0f", devs) } std devs    #{pair[0] }"
     end
   end
   
 end
+
+def print_dept_percents
+
+  $departments_scaled.each_pair do |dept, hh|
+    puts "---- #{dept}"
+    hh.to_a.sort_by { |pair| pair[1]}.reverse[0,10].each do |pair|
+      puts "  * #{sprintf("%5.1f", pair[1] * 100)}% #{pair[0]}"
+    end
+    puts "\n"
+  end  
+
+  $departments_scaled.each_pair do |dept, hh|
+    filename_base = "/tmp/" + dept.gsub(/[ &:]/, "-").gsub(/-+/, "-").downcase
+
+    filename_pie = filename_base + ".pie"
+    file = File.open(filename_pie, "w")
+    hh.to_a.sort_by { |pair| pair[1]}.reverse[0,10].each do |pair|
+      file.write("#{sprintf("%5.1f", pair[1] * 100)},#{pair[0].gsub(/&/, "and")}\n")
+    end
+    file.close
+
+    filename_svg = filename_base + ".svg"
+    filename_annotated = filename_base + ".png"
+    
+    pie_cmd = "piechart  --percent  --order value,legend --color contrast #{filename_pie} > #{filename_svg}"
+    `#{pie_cmd}`
+    convert_cmd = "convert #{filename_svg} -gravity north -extent 900x700 -pointsize 50 -fill black  -annotate +0+600 \"#{dept.downcase}\"  #{filename_annotated}"
+    `#{convert_cmd}`
+    puts "create pie chart #{filename_annotated}"
+
+  end  
+
+  
+end
+
 
 
 ## top-level functions
@@ -152,7 +194,12 @@ end
 
 task :analyze do
   populate_flow_data
+  scale_depts
   calculate_class_percents
-
 end
 
+task :department do
+  populate_flow_data
+  scale_depts
+  print_dept_percents
+end
