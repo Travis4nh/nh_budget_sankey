@@ -21,12 +21,13 @@ rows.each_with_index do |row, ii|
   end
 end
 
-$flows = Hash.new{ |hash, key| hash[key] = Hash.new(0) }
+$flows = Hash.new{ |hash, key| hash[key] = Hash.new{ |hash, key| hash[key] = Hash.new(0) } }
 $spending_classes = Set.new
+$headcount_classes = Set.new
 $departments_scaled = Hash.new
 
-def add_flow(source, dest, amt)
-  $flows[source][dest] += amt
+def add_flow(what, source, dest, amt)
+  $flows[what][source][dest] += amt
 end
 
 def populate_flow_data
@@ -43,21 +44,25 @@ def populate_flow_data
     activity = row['Activity']
     spending_class = row['Class']
 
-    if ["Expense", "Position"].include?(row['Record Type']) 
+    if row['Record Type'] == "Expense" 
       $spending_classes.add(spending_class)
       
 
 
-      add_flow(fund, cat, amt)
-      add_flow(cat, dept, amt)
-      add_flow(dept, agency, amt)
-      # add_flow(agency, activity, amt)
-      add_flow(agency, spending_class, amt)
+      add_flow(:spending, fund, cat, amt)
+      add_flow(:spending, cat, dept, amt)
+      add_flow(:spending, dept, agency, amt)
+      # add_flow(:spending, agency, activity, amt)
+      add_flow(:spending, agency, spending_class, amt)
 
     elsif row['Record Type'] == "Funding"
     # puts " funding"
     elsif row['Record Type'] == "Position"
-    # puts " position"
+      $headcount_classes.add(spending_class)
+      add_flow(:people, fund, cat, amt)
+      add_flow(:people, cat, dept, amt)
+      add_flow(:people, dept, agency, amt)
+      add_flow(:people, agency, spending_class, amt)
     else
       raise "unknown record type `#{row['Record Type']}`"
     end
@@ -66,20 +71,32 @@ def populate_flow_data
 
 end
 
+def format_units(what, amt)
+  case what
+  when :spending
+    "$#{amt}"
+  when :people
+    "#{amt}PPL"
+  end
+end
+
 def output_flow_data
-  $flows.each_pair do |src, details|
-    details.each_pair do |dest, amt|
-      puts " #{src} [#{amt}] #{dest} "
+  $flows.each_pair do |what, data|
+    $data.each_pair do |src, details|
+      details.each_pair do |dest, amt|
+        puts " #{src} [#{format_units(what, amt)}] #{dest} "
+      end
     end
   end
 end
 
 def find_personnel_placeholders
-  $flows.each_pair do |src, details|
+  what = :spending
+  $flows[:spending].each_pair do |src, details|
     details.each_pair do |dest, amt|
       if $spending_classes.include?(dest)
-        if amt < 1000 && amt > 0 && ["059-Temp Full Time","FTE1-Permanent Classified","FTE2-Unclassified Positions"].include?(dest)
-         puts "#{src} / #{dest} = #{amt}"
+        if 0 < amt && amt < 100 && ("059-Temp Full Time" == dest || dest.match(/^\d+-Personal Services/))
+          puts "#{src},#{dest},#{format_units(what, amt)}"
         end
       end
     end
@@ -91,7 +108,7 @@ def scale_depts
   
   departments = Hash.new{ |hash, key| hash[key] = Hash.new(0) }
   
-  $flows.each_pair do |src, details|
+  $flows[:spending].each_pair do |src, details|
     details.each_pair do |dest, amt|
       # is the flow is from an acct_class to a class (lead node)
       if $spending_classes.include?(dest)
@@ -210,6 +227,7 @@ task :analyze do
 end
 
 task :headcount do
+  populate_flow_data
   find_personnel_placeholders
 end
 
