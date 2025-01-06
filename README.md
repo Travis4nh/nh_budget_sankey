@@ -17,7 +17,7 @@ It has several modes of operation (discussed below).
 1. download an excel file for a budget from [here](https://www.das.nh.gov/budget/)
 1. open the excel file in OpenOffice or similar and export as a CSV.
 
-Steps 3 and 4 have already been done for you, and the CSV file is included as part of this package.
+The download-and-export-as-CSV steps already been done for you, and the CSV file is included as part of this package.
 
 # Use
 
@@ -79,6 +79,20 @@ e.g.
 
 1. `rake headcount`
 
+
+## Future directions
+
+1. add in revenue sources
+1. add in a tool to print out revenue sources from largest to smallest, so we can see what taxes might be entirely cut
+1. see if we can find more information on programs within departments.  It's good to know that "HHS: Public Health Division" spent $100 million dollars, and it's good to know what percent of that went to IT and phones ...but what was it DOING?
+1. ...and generate bar graph as per [a google sheet I created](https://docs.google.com/spreadsheets/d/1cYXZCm7VYefe_cPtn6cgwhq_7w-7Rti7Ehcf_h9D8SI/edit?usp=sharing)
+1. import multiple years of NH state budgets, so that we can look for outliers where departments grew their budgets especially quickly.
+1. perhaps use a database to instead of in-memory data structures (hashes) to hold data
+1. add the capability to analyze town budgets
+1. use a different sankey library so that we're not dependent on a web tool
+1. ...and maybe allow the user to turn on and off flows out of certain departments in the UI so they're not overwhelmed with pixels
+1. fix the pie charts to use consistent colors for spending categories across departments
+1. fix the pie charts to not clip text
 
 # Authorship
 
