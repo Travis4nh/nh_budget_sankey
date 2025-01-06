@@ -73,7 +73,7 @@ Also generates on piechart per department and writes it to `/tmp`.
 
 e.g.
 
-![pie chart example](./docs/piechart.png)
+![pie chart example](./docs/piechart.jpeg)
 
 ## Find alarming headcount numbers
 
