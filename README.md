@@ -30,6 +30,8 @@ To do so:
 1. `rake sankey > nh_budget_for_sankey.txt`
 2. go [here](https://sankeymatic.com/build/) and upload the file generated in step 1
 
+![pie chart example](./docs/sankey.jpeg)
+
 ## Analyze the budget looking for weird outliers
 
 1. `rake analyze`
@@ -68,6 +70,10 @@ For each department, break down how it spends money (and prints it to std out)
 Also generates on piechart per department and writes it to `/tmp`.
 
 1. `rake department`
+
+e.g.
+
+![pie chart example](./docs/piechart.png)
 
 ## Find alarming headcount numbers
 
