@@ -1,0 +1,12 @@
+---
+:input_file: ./data/2026_2027_AgencyBudget.csv
+:header_row: 5
+:data_row: 7
+:head_level_1: 'Fund'
+:head_level_2: 'Category of Government'
+:head_level_3: 'Department'
+:head_level_4: 'Agency'
+:head_level_5: 'Activity'
+:head_level_6: 'Class'
+:head_expense_or_fund : 'Record Type'
+:head_dollars : 'FY27 Total Request'

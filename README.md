@@ -21,6 +21,18 @@ The download-and-export-as-CSV steps already been done for you, and the CSV file
 
 # Use
 
+## Configure for a new data file
+
+The rakefile uses `.rakefile.yaml` to hold configuration information.
+
+The tool is configured to work out of the box
+
+
+
+As shipped, 
+
+
+
 ## Generating a Sankey diagram
 
 This tool can generate a [Sankey digram](https://en.wikipedia.org/wiki/Sankey_diagram).
