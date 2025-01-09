@@ -42,7 +42,6 @@ def populate_flow_data
         break
       end
     end
-    puts "headers = #{headers.inspect}"
 
     data_row_num        = config[:data_row ]
 
@@ -267,12 +266,14 @@ end
 
 task :sankey do
   populate_flow_data
-  # write_sankey_file
+  output_flow_data
   
   file = File.open("./sankey_display_settings.txt", "r")
   contents = file.read
   puts contents
 end
+
+task :default => :sankey
 
 task :analyze do
   populate_flow_data
