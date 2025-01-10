@@ -14,8 +14,7 @@ It has several modes of operation (discussed below).
 1. `make`
 1. `make install`
 1. `cd ..`
-1. download an excel file for a budget from [here](https://www.das.nh.gov/budget/)
-1. open the excel file in OpenOffice or similar and export as a CSV.
+1. `bundle update`
 
 The download-and-export-as-CSV steps already been done for you, and the CSV file is included as part of this package.
 
@@ -143,3 +142,6 @@ This package is not yet licensed.  I'll almost certainly open source it.
 Please feel free to [create a ticket](https://github.com/Travis4nh/nh_budget_sankey/issues).
 
 
+# Internal notes
+- rvm use 3.3.5
+- rails new nh
