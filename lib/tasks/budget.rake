@@ -144,10 +144,14 @@ namespace :budget do
       end
     end
 
+    # puts "departments = #{departments}"
+
     $departments_scaled = Hash.new
 
     departments.each_pair do |dept, hh|
 
+      # puts "dept = #{dept} / hh = #{hh}"
+      
       total = hh.to_a.inject(0) { |sum, pair| sum + pair[1] }
       next if total == 0
       scaled_h = hh.to_a.map { |expense_name, spending_dollars| [expense_name, spending_dollars * 1.0 / total ] }.to_h
@@ -170,9 +174,8 @@ namespace :budget do
 
     $spending_classes.to_a.sort.each do |sp_class|
 
-      
-      #puts departments_scaled.map { |k, hh| [ k, hh[sp_class] ] }.inspect
-      arr = departments_scaled.map { |k, hh| [ k, hh[sp_class] || 0.0 ] }.sort_by { | pair | pair[1] }.reverse
+      arr = $departments_scaled.map { |k, hh| [ k, hh[sp_class] || 0.0 ] }.sort_by { | pair | pair[1] }.reverse
+      next if arr.length == 0
       avg = arr.map { |pair| pair[1] }.sum / arr.length
 
       variance_array = arr.map{|pair| (pair[1] - avg) }
@@ -181,12 +184,11 @@ namespace :budget do
       
       puts "---- #{sp_class} avg = #{sprintf("%3.2f", avg * 100)}%, std_dev = #{sprintf("%2.2f", std_dev * 100)} percentage pts "
 
-      if arr.reject { |k, v| v == 0.0 }.length < 3
-        puts "skipped bc too few"
-        next
-      end
+#      if arr.reject { |k, v| v == 0.0 }.length < 3
+#        puts "skipped bc too few"
+#        next
+#      end
       
-      # puts "arr = #{arr.inspect}"
 
 
       arr[0,10].each do |pair|
@@ -199,8 +201,6 @@ namespace :budget do
 
   def print_dept_percents
 
-    # puts "$departments_scaled = #{$departments_scaled}"
-    
     $departments_scaled.each_pair do |dept, hh|
       puts "---- #{dept}"
       hh.to_a.sort_by { |pair| pair[1]}.reverse[0,10].each do |pair|
@@ -253,6 +253,7 @@ namespace :budget do
   desc "calculate the percentages of each department"
   task :analyze do
     populate_flow_data
+    scale_depts
     calculate_class_percents
   end
 

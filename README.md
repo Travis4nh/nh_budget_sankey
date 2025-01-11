@@ -38,14 +38,14 @@ This tool can generate a [Sankey digram](https://en.wikipedia.org/wiki/Sankey_di
 
 To do so:
 
-1. `rake sankey > nh_budget_for_sankey.txt`
+1. `rake budget:sankey > nh_budget_for_sankey.txt`
 2. go [here](https://sankeymatic.com/build/) and upload the file generated in step 1
 
 ![pie chart example](./docs/sankey.jpeg)
 
 ## Analyze the budget looking for weird outliers
 
-1. `rake analyze`
+1. `rake budget:analyze`
 
 You will get text output, which lists each category of spending (along
 with what percentage of its entire budget the average NH department
@@ -80,7 +80,7 @@ For each department, break down how it spends money (and prints it to std out)
 
 Also generates on piechart per department and writes it to `/tmp`.
 
-1. `rake department`
+1. `rake budget:department`
 
 e.g.
 
@@ -88,7 +88,7 @@ e.g.
 
 ## Find alarming headcount numbers
 
-1. `rake headcount`
+1. `rake budget:headcount`
 
 
 ## Future directions
