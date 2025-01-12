@@ -2,8 +2,6 @@
 
 one:
   name: MyString
-  timeperiod: one
 
 two:
   name: MyString
-  timeperiod: two

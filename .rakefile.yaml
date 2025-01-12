@@ -2,6 +2,8 @@
 :input_file: ./data/nh/2026_2027_AgencyBudget.csv
 :header_row: 5
 :data_row: 6
+:period: '2026'
+:name:   'NH Agency'
 :header_level_1: 'Fund'
 :header_level_2: 'Category of Government'
 :header_level_3: 'Department'

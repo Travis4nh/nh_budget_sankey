@@ -6,19 +6,20 @@ namespace :budget do
   $flows = Hash.new{ |hash, key| hash[key] = Hash.new(0) }
   $spending_classes = Set.new
   $departments_scaled = Hash.new
-
+  $config = nil
+  
   # populates $flows
-  def populate_flow_data
+  task :populate_flow_data => :environment do
 
     # read config
     #
     configfile = "./.rakefile.yaml"
     if FileTest.exist?(configfile)
-      config  = YAML.load_file(configfile)
-      csv_file_path = config[:input_file]
+      $config  = YAML.load_file(configfile)
+      csv_file_path = $config[:input_file]
 
     else
-      raise "no config file"
+      raise "no $config file"
     end
 
 
@@ -102,12 +103,37 @@ namespace :budget do
 
     # puts "$spending_classes = #{$spending_classes}"
     
-    csv_to_flow(csv_file_path, config)
+    csv_to_flow(csv_file_path, $config)
 
 
     # puts "populate_flow_data() $spending_classes = #{$spending_classes.inspect}"
   end
 
+  task :persist do
+    timeperiod = Timeperiod.find_or_create_by(name: $config[:period])
+    budget = Budget.find_or_create_by(name: $config[:name], timeperiod: )
+    # puts " xxx = #{$flows.keys.uniq}"
+
+    acct_names = ($flows.keys + $flows.values.map(&:keys)).flatten.uniq
+    puts "acct_names = #{acct_names}"
+    accts_h = {}
+    acct_names.each do  |name|
+      puts "create acct #{name}"
+      accts_h[name] = Account.find_or_create_by(name:, budget: )
+    end
+
+    ### XXXX this is wrong because we don't sum up all of the flows, e.g
+
+    $flows.each_pair do |source_name, outflow_hash|
+      outflow_hash.each_pair do |dest_name, amount|
+        puts "source_name = #{source_name} , dest_name = #{dest_name}"
+        source = accts_h[source_name]
+        dest = accts_h[dest_name]
+        transfer = Transfer.create!(budget: , source: , dest: , amount: )
+      end
+    end
+
+  end
 
   def output_flow_data
     $flows.each_pair do |src, details|
@@ -239,8 +265,7 @@ namespace :budget do
   ## top-level functions
 
   desc "generate sankey data to stdout"
-  task :sankey do
-    populate_flow_data
+  task :sankey => [ :populate_flow_data]  do
     output_flow_data
     
     file = File.open("./sankey_display_settings.txt", "r")
@@ -251,18 +276,17 @@ namespace :budget do
   task :default => :sankey
 
   desc "calculate the percentages of each department"
-  task :analyze do
-    populate_flow_data
+  task :analyze => [:populate_flow_data, :persist] do
     scale_depts
     calculate_class_percents
   end
 
-  task :headcount do
+  task :headcount => :environment  do
     find_personnel_placeholders
   end
 
   desc "calculate the percentages of each department"
-  task :department do
+  task :department => :environment  do
     populate_flow_data
     scale_depts
     print_dept_percents

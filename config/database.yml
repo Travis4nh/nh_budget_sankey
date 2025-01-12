@@ -7,6 +7,8 @@
 default: &default
   adapter: sqlite3
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  # database: ":memory:"
+  journal_mode: WAL 
   timeout: 5000
 
 development:
