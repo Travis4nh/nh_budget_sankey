@@ -8,4 +8,18 @@ class Account < ApplicationRecord
 
   has_many :upstream_direct, class_name: "Account", through: :transfers_in, :source => "source"
 
+  def all_upstream_transfers(known_transfers = [])
+    new_transfers = transfers_in.to_a - known_transfers
+    # puts "1: new_transfers = #{new_transfers}"
+    new_transfers.map(&:source).each do |source|
+      # puts "   recurse >>"
+      indirect = source.all_upstream_transfers(known_transfers)
+      # puts "   <<< recurse "
+      # puts "2: indirect = #{indirect}"
+      new_transfers += indirect
+    end
+    # puts "3: about to return #{new_transfers}"
+    new_transfers
+  end
+  
 end

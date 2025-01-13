@@ -118,18 +118,19 @@ namespace :budget do
     # puts " xxx = #{$flows.keys.uniq}"
 
     acct_names = ($flows.keys + $flows.values.map(&:keys)).flatten.uniq
-    puts "acct_names = #{acct_names}"
+    # puts "acct_names = #{acct_names}"
     accts_h = {}
     acct_names.each do  |name|
-      puts "create acct #{name}"
+      # puts "create acct #{name}"
       accts_h[name] = Account.find_or_create_by(name:, budget: )
     end
 
     ### XXXX this is wrong because we don't sum up all of the flows, e.g
 
+    Transfer.destroy_all
     $flows.each_pair do |source_name, outflow_hash|
       outflow_hash.each_pair do |dest_name, details_hash|
-        puts "source_name = #{source_name} , dest_name = #{dest_name}"
+        # puts "source_name = #{source_name} , dest_name = #{dest_name}"
         source = accts_h[source_name]
         dest = accts_h[dest_name]
         amount = details_hash[:amount]
