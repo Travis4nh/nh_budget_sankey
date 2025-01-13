@@ -4,6 +4,9 @@ class CreateTransfers < ActiveRecord::Migration[7.2]
       t.references :budget, null: false, foreign_key: true
       t.references :source, null: false, foreign_key: {to_table: :accounts}
       t.references :dest, null: false, foreign_key: {to_table: :accounts}
+
+      t.string  :file
+      t.integer :row
       t.decimal :amount
 
       t.timestamps

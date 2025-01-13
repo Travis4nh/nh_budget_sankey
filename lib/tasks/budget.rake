@@ -3,7 +3,7 @@ require 'yaml'
 
 
 namespace :budget do
-  $flows = Hash.new{ |hash, key| hash[key] = Hash.new(0) }
+  $flows = Hash.new{ |hash, key| hash[key] = Hash.new }
   $spending_classes = Set.new
   $departments_scaled = Hash.new
   $config = nil
@@ -23,8 +23,11 @@ namespace :budget do
     end
 
 
-    def add_flow(source, dest, amt)
-      $flows[source][dest] += amt
+    def add_flow(source, dest, csv_file_path, row, amt)
+      $flows[source][dest]        = Hash.new if $flows[source][dest].nil?
+      $flows[source][dest][:file] = csv_file_path if $flows[source][dest][:file].nil?
+      $flows[source][dest][:row]  = row if $flows[source][dest][:row].nil?
+      if $flows[source][dest][:amount] then $flows[source][dest][:amount]  += amt       else        $flows[source][dest][:amount]  = amt      end
     end
 
     def csv_to_flow(csv_file_path, config)
@@ -84,11 +87,11 @@ namespace :budget do
           $spending_classes.add(level_6)
           
 
-          add_flow(level_1, level_2, amt)
-          add_flow(level_2, level_3, amt)
-          add_flow(level_3, level_4, amt)
-          add_flow(level_4, level_5, amt)
-          add_flow(level_5, level_6, amt)
+          add_flow(level_1, level_2, csv_file_path, ii, amt)
+          add_flow(level_2, level_3, csv_file_path, ii, amt)
+          add_flow(level_3, level_4, csv_file_path, ii, amt)
+          add_flow(level_4, level_5, csv_file_path, ii, amt)
+          add_flow(level_5, level_6, csv_file_path, ii, amt)
 
         elsif "Funding" == expense_or_fund
         # puts " funding"
@@ -125,11 +128,14 @@ namespace :budget do
     ### XXXX this is wrong because we don't sum up all of the flows, e.g
 
     $flows.each_pair do |source_name, outflow_hash|
-      outflow_hash.each_pair do |dest_name, amount|
+      outflow_hash.each_pair do |dest_name, details_hash|
         puts "source_name = #{source_name} , dest_name = #{dest_name}"
         source = accts_h[source_name]
         dest = accts_h[dest_name]
-        transfer = Transfer.create!(budget: , source: , dest: , amount: )
+        amount = details_hash[:amount]
+        file = details_hash[:file]
+        row = details_hash[:row]
+        transfer = Transfer.create!(budget: , source: , dest: , amount: , file:, row: )
       end
     end
 
@@ -176,11 +182,11 @@ namespace :budget do
 
     departments.each_pair do |dept, hh|
 
-      # puts "dept = #{dept} / hh = #{hh}"
+
       
-      total = hh.to_a.inject(0) { |sum, pair| sum + pair[1] }
+      total = hh.to_a.inject(0) { |sum, pair| sum + pair[1][:amount] }
       next if total == 0
-      scaled_h = hh.to_a.map { |expense_name, spending_dollars| [expense_name, spending_dollars * 1.0 / total ] }.to_h
+      scaled_h = hh.to_a.map { |expense_name, details_h| [expense_name, details_h[:amount] * 1.0 / total ] }.to_h
 
       # puts "-------------------- #{dept}"
       # puts "raw = #{hh.inspect}"

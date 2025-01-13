@@ -37,6 +37,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_11_161558) do
     t.integer "budget_id", null: false
     t.integer "source_id", null: false
     t.integer "dest_id", null: false
+    t.string "file"
+    t.integer "row"
     t.decimal "amount"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
