@@ -10,16 +10,21 @@ class Account < ApplicationRecord
 
   def all_upstream_transfers(known_transfers = [])
     new_transfers = transfers_in.to_a - known_transfers
-    # puts "1: new_transfers = #{new_transfers}"
     new_transfers.map(&:source).each do |source|
-      # puts "   recurse >>"
       indirect = source.all_upstream_transfers(known_transfers)
-      # puts "   <<< recurse "
-      # puts "2: indirect = #{indirect}"
       new_transfers += indirect
     end
-    # puts "3: about to return #{new_transfers}"
     new_transfers
   end
+
+  def all_downstream_transfers(known_transfers = [])
+    new_transfers = transfers_out.to_a - known_transfers
+    new_transfers.map(&:dest).each do |dest|
+      indirect = dest.all_downstream_transfers(known_transfers)
+      new_transfers += indirect
+    end
+    new_transfers
+  end
+
   
 end
