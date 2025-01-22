@@ -41,7 +41,6 @@ namespace :budget do
           break
         end
       end
-      # puts "headers = #{headers}"
       
       data_row_num        = config[:data_row ]
 
@@ -112,6 +111,63 @@ namespace :budget do
     # puts "populate_flow_data() $spending_classes = #{$spending_classes.inspect}"
   end
 
+  task :populate_weare => :environment do
+
+    # read config
+    #
+    configfile = "./.rakefile.yaml"
+    config = nil
+    if FileTest.exist?(configfile)
+      config  = YAML.load_file(configfile)
+      csv_file_path = config[:input_file]
+    else
+      raise "no $config file"
+    end
+    data_row_num = config[:data_row ]
+    timeperiod   = Timeperiod.find_or_create_by(name: config[:period])
+    budget       = Budget.find_or_create_by(name: config[:name], timeperiod: )
+    Transfer.destroy_all
+
+    
+    level_3_h = {}
+        level_3_h = {}
+    ii = 0
+    CSV.foreach( csv_file_path) do |row|
+
+      ii += 1
+      next unless ii > data_row_num
+
+      text = row[0].strip
+      amt = row[1..99].map { |x|  x&.gsub(/[^0-9.]/, "").to_i }.detect { |x| x > 0 }
+
+      if text.match(/^TOTAL/) 
+        puts "level 2 #{text}"
+        text = text.gsub(/TOTAL /,"").capitalize
+        level_3_account = Account.find_or_create_by(name: text, budget: )
+        level_3_h.each_pair do |level_3_cat, details_h|
+          level_2_account = Account.find_or_create_by(name: level_3_cat, budget: )          
+
+          transfer = Transfer.create!(budget: ,
+                                      source: level_3_account ,
+                                      dest: level_2_account ,
+                                      amount: details_h[:amt],
+                                      file: csv_file_path,
+                                      row: details_h[:row] )
+        end
+        level_3_h = {}
+      elsif text.match(/-/)
+        puts "level 1 #{text} - #{amt}"
+        level_3_h[text] = { amt: amt, row: ii }
+      else
+        puts "*** warn #{text}"
+      end
+    end
+    level_1_account = Account.find_or_create_by(name: "town budget", budget: )
+
+    
+  end
+
+  
   task :persist do
     timeperiod = Timeperiod.find_or_create_by(name: $config[:period])
     budget = Budget.find_or_create_by(name: $config[:name], timeperiod: )
@@ -299,4 +355,8 @@ namespace :budget do
     print_dept_percents
   end
 
+  desc "import a town of Weare budget"
+  task :weare => :populate_weare do
+  end
+  
 end

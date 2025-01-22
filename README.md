@@ -106,6 +106,14 @@ e.g.
 1. fix the pie charts to not clip text
 1. add tests ; use Husky to require pass before commit
 1. add rubocop; use Husky to require before commit
+1. add a module that scrapes all NH NGO 990 info https://projects.propublica.org/nonprofits/api and puts their cash flows into the graph, e.g
+```
+  curl --get --data-urlencode q='Planned Parenthood New Hampshire Action' https://projects.propublica.org/nonprofits/api/v2/search.json
+  curl --get https://projects.propublica.org/nonprofits/api/v2/organizations/465554692.json
+```
+
+apparently schedule B (list of donors) is no longer public information.
+
 
 # Other Data sources
 
@@ -115,15 +123,29 @@ e.g.
 - https://gencourt.state.nh.us/lba/Revenues/FY%2026-27/REVISED%20FY19-25%20GF%20ETF%20Revenue%20Collection%20(Thru%2011-30-2024).pdf
 
 - previous year budgets
+  - 2024 Jan 19 -Eagen, Scott, asked about finer-grained data
   - 2024 Jan 6 - Eagen, Scott scott.t.eagen@das.nh.gov provided this link https://www.das.nh.gov/accounting/previous_years.aspx
   - 2024 Jan 6 - asked him for excel, not just PDF
+
+- Local and State police re NBIRS
+  - 2025 Jan 21 - emailed SPHeadquarters@dos.nh.gov
+  - 2024 Dec 26 - emailed christopher.moore@wearepolice.com ... he directed me to State police
 
 ## Weare, NH
 
 - 2024 Jan 6 SAU 24 has minimal useful data [web page](https://www.sau24.org/schools/centerwoods/about-us/budget-information)
   - [google drive - Weare Center Woods](https://drive.google.com/drive/folders/1syPk3xqqWF8bQuBfnBFwwb9s5CmUbiL-)
-  - [google drive - John Connor](https://drive.google.com/drive/folders/1TrNKOtioKx0uF_12HeNC0NLKcS2kV8sX)
+  - [google drive - John Connor](https://drive.google.com/drive/folders/1TrNdKOtioKx0uF_12HeNC0NLKcS2kV8sX)
 - 2024 Jan 6 left voicemail for Beth Rouse asking for town budgets (603) 529-7526
+
+https://www.education.nh.gov/who-we-are/division-of-educator-and-analytic-resources/iplatform
+
+# Related projects
+
+Non profit explorer
+
+- UI: https://joeisdone.github.io/expose/
+- repo: https://github.com/joeisdone/joeisdone.github.io
 
 # Authorship
 
@@ -144,4 +166,4 @@ Please feel free to [create a ticket](https://github.com/Travis4nh/nh_budget_san
 
 # Internal notes
 - rvm use 3.3.5
-- rails new nh
+- rails new nh9

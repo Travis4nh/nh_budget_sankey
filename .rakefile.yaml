@@ -1,14 +1,5 @@
 ---
-:input_file: ./data/nh/2026_2027_AgencyBudget.csv
-:header_row: 5
-:data_row: 6
-:period: '2026'
-:name:   'NH Agency'
-:header_level_1: 'Fund'
-:header_level_2: 'Category of Government'
-:header_level_3: 'Department'
-:header_level_4: 'Agency'
-:header_level_5: 'Activity'
-:header_level_6: 'Class'
-:header_expense_or_fund : 'Record Type'
-:header_dollars : 'FY27 Total Request'
+:input_file: ./data/nh_weare/2023_Town_Expenditures.csv
+:header_row: 0
+:data_row: 1
+:period: '2023'
