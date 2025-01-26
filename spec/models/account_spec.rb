@@ -2,6 +2,13 @@ require 'rails_helper'
 
 RSpec.describe Account, type: :model do
   describe 'when there are simple linear transfers' do
+    #                      acct1
+    #                        |
+    #                      acct2
+    #                        |
+    #                      acct3
+    #                        |
+    #                      acct4
     let!(:budget) { create(:budget, name: '1996 budget' ) }
     let!(:account1) { create(:account, name: '01 - General Fund', budget:) }
     let!(:account2) { create(:account, name: '02 - Gold Depository', budget:) }
@@ -47,6 +54,9 @@ RSpec.describe Account, type: :model do
   describe 'when there is one tier of many-to-one transfers' do
     let!(:budget) { create(:budget, name: '1996 budget' ) }
     
+    #                  left    right
+    #                     \    /   
+    #                      bottom
     let!(:account_left) { create(:account, name: 'left', budget:) }
     let!(:account_right) { create(:account, name: 'right', budget:) }
     let!(:account_bottom) { create(:account, name: 'bottom', budget:) }
@@ -69,6 +79,11 @@ RSpec.describe Account, type: :model do
 
   describe 'when there are two tiers of many-to-one transfers' do
     let!(:budget) { create(:budget, name: '1996 budget' ) }
+    #         left_left  left_right
+    #                \    /            ...
+    #                  left    right
+    #                     \    /   
+    #                      bottom
     
     let!(:account_left_left) { create(:account, name: 'left left', budget:) }
     let!(:account_left_right) { create(:account, name: 'left right', budget:) }
@@ -87,8 +102,8 @@ RSpec.describe Account, type: :model do
     let!(:transfer_rb) { create(:transfer, source: account_right, dest: account_bottom, budget: ) }
 
     it 'relations work' do
-      expect(account_left.transfers_in).to eq([])
-      expect(account_right.transfers_in).to eq([])
+      expect(account_left.transfers_in).to eq([transfer_ll_l, transfer_lr_l])
+      expect(account_right.transfers_in).to eq([transfer_rl_r, transfer_rr_r])
       expect(account_bottom.transfers_in.to_set).to eq([transfer_lb, transfer_rb].to_set)
     end
     
@@ -110,6 +125,11 @@ RSpec.describe Account, type: :model do
 
   describe 'when there are two tiers of one-to-many transfers' do
     let!(:budget) { create(:budget, name: '1996 budget' ) }
+    #                      top
+    #                     /   \
+    #                  left    right
+    #                  /  \
+    #         left_left  left_right   ...
 
     let!(:account_top) { create(:account, name: 'top', budget:) }
     let!(:account_left) { create(:account, name: 'left', budget:) }
@@ -130,10 +150,9 @@ RSpec.describe Account, type: :model do
     let!(:transfer_r_rr) { create(:transfer, source: account_right, dest: account_right_right, budget: ) }
 
 
-    
     it 'relations work' do
-      expect(account_left.transfers_in).to eq([account_top])
-      expect(account_right.transfers_in).to eq([account_top])
+      expect(account_left.transfers_in).to eq([transfer_tl])
+      expect(account_right.transfers_in).to eq([transfer_tr])
     end
     
     it 'all_downstream_transfers() work' do

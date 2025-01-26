@@ -106,13 +106,12 @@ e.g.
 1. fix the pie charts to not clip text
 1. add tests ; use Husky to require pass before commit
 1. add rubocop; use Husky to require before commit
-1. add a module that scrapes all NH NGO 990 info https://projects.propublica.org/nonprofits/api and puts their cash flows into the graph, e.g
-```
+1. follow one really egregious use of money to its source, add who’s in charge of budget at each stage, print the whole thing out on a large format printer in large distance-readable font and then unroll the massive exhibit in session; massive theater
+1. add a module that scrapes all NH NGO 990 info https://projects.propublica.org/nonprofits/api and puts their cash flows into the graph, e.g ```
   curl --get --data-urlencode q='Planned Parenthood New Hampshire Action' https://projects.propublica.org/nonprofits/api/v2/search.json
   curl --get https://projects.propublica.org/nonprofits/api/v2/organizations/465554692.json
-```
-
-apparently schedule B (list of donors) is no longer public information.
+``` apparently schedule B (list of donors) is no longer public information.
+1. 
 
 
 # Other Data sources
