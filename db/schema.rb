@@ -11,12 +11,20 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema[7.2].define(version: 2025_01_11_161558) do
-  create_table "accounts", force: :cascade do |t|
+  create_table "account_tiers", force: :cascade do |t|
     t.string "name"
     t.integer "budget_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["budget_id"], name: "index_accounts_on_budget_id"
+    t.index ["budget_id"], name: "index_account_tiers_on_budget_id"
+  end
+
+  create_table "accounts", force: :cascade do |t|
+    t.string "name"
+    t.integer "account_tier_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_tier_id"], name: "index_accounts_on_account_tier_id"
   end
 
   create_table "budgets", force: :cascade do |t|
@@ -47,7 +55,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_11_161558) do
     t.index ["source_id"], name: "index_transfers_on_source_id"
   end
 
-  add_foreign_key "accounts", "budgets"
+  add_foreign_key "account_tiers", "budgets"
+  add_foreign_key "accounts", "account_tiers"
   add_foreign_key "budgets", "timeperiods"
   add_foreign_key "transfers", "accounts", column: "dest_id"
   add_foreign_key "transfers", "accounts", column: "source_id"

@@ -4,11 +4,6 @@
 :data_row: 6
 :period: '2026'
 :name:   'NH Agency'
-:header_level_1: 'Fund'
-:header_level_2: 'Category of Government'
-:header_level_3: 'Department'
-:header_level_4: 'Agency'
-:header_level_5: 'Activity'
-:header_level_6: 'Class'
+:header_levels: [ 'Fund', 'Category of Government', 'Department', 'Agency', 'Activity', 'Class']
 :header_expense_or_fund : 'Record Type'
 :header_dollars : 'FY27 Total Request'

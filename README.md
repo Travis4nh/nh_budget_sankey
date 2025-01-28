@@ -16,36 +16,39 @@ It has several modes of operation (discussed below).
 1. `cd ..`
 1. `bundle update`
 
-The download-and-export-as-CSV steps already been done for you, and the CSV file is included as part of this package.
-
 # Use
 
-## Configure for a new data file
+All use models start with these two steps:
 
-The rakefile uses `.rakefile.yaml` to hold configuration information.
-
-The tool is configured to work out of the box
-
-
-
-As shipped, 
-
+1. clear existing data: `rake budget:clear`
+1. import data: `rake budget:import .rakefile_NH_STATE.yaml`
 
 
 ## Generating a Sankey diagram
 
-This tool can generate a [Sankey digram](https://en.wikipedia.org/wiki/Sankey_diagram).
+After the above steps:
 
-To do so:
+3. generate sankey from imported data: `rake budget:sankey > sankey.txt`
 
-1. `rake budget:sankey > nh_budget_for_sankey.txt`
-2. go [here](https://sankeymatic.com/build/) and upload the file generated in step 1
+or, the above three bundled:
 
-![pie chart example](./docs/sankey.jpeg)
+* `rake budget:quick .rakefile_NH_STATE.yaml  > sankey.txt`
+
+Once you have `sankey.txt`, upload it to https://sankeymatic.com/build/
+
+![sankey chart example](./docs/sankey.jpeg)
+
+## Source of data
+
+Data files are stored in `./data`.  Data files have various configurations; each one needs a matching `.rakefile_FOO.yaml` that explains to the tool how to parse the data file.
+
+You can add new data files in `./data` and write a matching `.rakefile` to go with it.
 
 ## Analyze the budget looking for weird outliers
 
-1. `rake budget:analyze`
+Once you've loaded data (as per above)  you can 
+
+3. `rake budget:analyze`
 
 You will get text output, which lists each category of spending (along
 with what percentage of its entire budget the average NH department
@@ -139,7 +142,7 @@ e.g.
 
 https://www.education.nh.gov/who-we-are/division-of-educator-and-analytic-resources/iplatform
 
-# Related projects
+# Related / other projects
 
 Non profit explorer
 

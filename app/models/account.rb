@@ -1,5 +1,5 @@
 class Account < ApplicationRecord
-  belongs_to :budget
+  belongs_to :account_tier
 
   has_many :transfers_out, class_name: "Transfer", foreign_key: "source_id"
   has_many :transfers_in, class_name: "Transfer", foreign_key: "dest_id"
