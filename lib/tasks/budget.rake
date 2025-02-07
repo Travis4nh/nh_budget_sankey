@@ -59,10 +59,9 @@ namespace :budget do
   end
 
   desc "for each element in AccountTier X, calculate the percentages of its spending in the next sub-tier"
-  task :find_outliers do
-    acct_tier = ARGV[1]
-    raise "need to specify tier name" unless acct_tier
-    Importer.new.find_outliers(acct_tier)
+  task :find_outliers, [:acct_tier] do |task, args|
+    raise "need to specify tier name" unless args[:acct_tier]
+    Importer.new.find_outliers(args[:acct_tier])
   end
 
   
