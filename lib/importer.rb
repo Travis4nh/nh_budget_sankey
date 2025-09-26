@@ -194,10 +194,19 @@ class Importer
     at = AccountTier.find_by_name(acct_tier)
     raise "no such account tier" unless at
 
+    next_tier_account_names = at.accounts.first.downstream_direct.first.account_tier.accounts.map(&:name)
+    
     transfers_out_scaled = Hash.new{ |hash, key| hash[key] = Hash.new(0) }
     at.accounts.each do |acct|
       total = acct.transfers_out.includes(:dest).map(&:amount).sum
-      transfers_out_scaled[acct] = acct.transfers_out.map { |transfer| [transfer.dest.name, transfer.amount.to_f / total ] }.to_h
+      if total < 1
+        puts "skipping acct #{acct.name} because total spending = #{total}"
+        next
+      end
+
+      # initialize defaults - every possible output = 0
+      # transfers_out_scaled[acct] = next_tier_account_names.map { |name| [name, 0] }.to_h
+      acct.transfers_out.each { |transfer| transfers_out_scaled[transfer.dest.name] = transfer.amount.to_f / total }
     end
     transfers_out_scaled
   end
@@ -210,6 +219,8 @@ class Importer
     raise "no such account tier" unless at
 
     transfers_out_scaled = scale(acct_tier)
+
+    # puts "transfers_out_scaled = #{transfers_out_scaled}"
     
     # create a mapping of output-accts -> [ scaled amount, scaled amount, scaled amount ... ]
     # e.g.   
@@ -217,21 +228,46 @@ class Importer
     #      "016-Personal Services Non Classifi"=> [ 0.2, 0.2 .. ],  }
     # 
     transfers_out_scaled_grouped = Hash.new{ |hash, key| hash[key] = Array.new }
-    transfers_out_scaled.each { |src, hh| hh.each_pair { |dest, fraction| transfers_out_scaled_grouped[dest] += [fraction] }}
-    transfers_out_stats = transfers_out_scaled_grouped.map do |dest, arr| 
-      avg = arr.sum / arr.length
-      variance_array = arr.map{|fract| (fract - avg) }
+    transfers_out_scaled.each { |src, hh| puts "src = #{src}, hh = #{hh}" ; hh.each_pair { |dest, fraction| transfers_out_scaled_grouped[dest] += [fraction]  }}
+     
+    transfers_out_stats = transfers_out_scaled_grouped.map do |dest, arr|
+      avg = arr.map{ |x| (x * 100)}.sum / arr.length
+      variance_array = arr.map{|fract| ((fract * 100) - avg) }
       std_dev = variance_array.size == 0 ? 0 :   Math.sqrt(variance_array.sum { |v| v ** 2} / variance_array.size)
+      avg = avg == Float::NAN ? 0 : avg
+      std_dev = std_dev == Float::NAN ? 0 : std_dev
       [ dest, { avg:, std_dev: } ]
     end.to_h
 
+    puts "-------------------- transfers_out_stats"
+    transfers_out_stats.each do |dest, arr|
+      puts "    * #{dest} #{arr}"
+      # puts "          raw = #{transfers_out_scaled_grouped[dest]}"
+    end
+    
     transfers_out_scaled.each do |src, hh|
-      avg = transfers_out_stats[:avg]
-      std_dev = transfers_out_stats[:std_dev]
-      puts "--- #{src.name} avg = #{sprintf("%3.2f", (avg || 0) * 100)}%, std_dev = #{sprintf("%2.2f", (std_dev || 0) * 100)}"
-#      arr[0,10].each do |pair|
-#        devs = (pair[1] - avg) / std_dev
-#        puts "  * #{sprintf("%5.2f", pair[1] * 100) }% + #{ sprintf("%2.0f", devs) } std devs    #{pair[0] }"
+      puts "--- #{src.name}" #  avg = #{sprintf("%3.2f", (avg || 0) * 100)}%, std_dev = #{sprintf("%2.2f", (std_dev || 0) * 100)}"
+      # puts "    keys = #{hh.keys}"
+      top_outputs = hh.map { |dest, fract| {dest:, percent: fract * 100} }.sort_by { |pair| pair[:percent] }.reverse
+      # puts "top_outputs = #{top_outputs}"
+
+
+      percent_total = 0
+      top_outputs[0,10].each do | dest_h|
+        dest_name = dest_h[:dest]
+        dest_percent = dest_h[:percent]
+        break if dest_percent  < 1
+
+        avg= transfers_out_stats[dest_name][:avg]
+        std_dev= transfers_out_stats[dest_name][:std_dev]
+        devs = (dest_percent - avg ) / std_dev
+
+        percent_total += dest_percent
+        
+        # x #{sprintf("%2.0f", std_dev)} 
+        puts "  * #{sprintf("%5.2f", dest_percent) }% = avg #{sprintf("%5.2f", avg)} + #{ sprintf("%2.0f", devs) } std devs    #{dest_name }"
+      end
+      puts "      total = #{percent_total}"
     end
     
   end
