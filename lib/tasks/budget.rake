@@ -3,13 +3,15 @@ require 'yaml'
 require 'importer'
 
 namespace :budget do
-  def parse_config
-    configfile = ARGV[1] || "./.rakefile.yaml"
+  def parse_config(rakefile)
+    puts "XXX\n"
+    configfile = rakefile || "./.rakefile.yaml"
+	puts "configfile = #{configfile}"
     config = nil
     if FileTest.exist?(configfile)
       config  = YAML.load_file(configfile)
     else
-      raise "no config file"
+      raise "no config file #{configfile} #{ARGV[0].inspect}"
     end
     config
   end
@@ -40,8 +42,8 @@ namespace :budget do
   end
 
   desc "clear old data, read CSV, sankey -> stdout"
-  task :quick => [:clear] do
-    config = parse_config
+  task :quick, [:rakefile] => [:clear] do |t,args|
+    config = parse_config(args[:rakefile])
     Importer.new.import(config)
     Importer.new.output_sankey
   end

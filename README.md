@@ -32,9 +32,9 @@ After the above steps:
 
 or, the above three bundled:
 
-* `rake budget:quick .rakefile_NH_STATE.yaml  > sankey.txt`
+* `rake budget:quick[.rakefile_STATE.yaml]  > sankey.txt`
 
-Once you have `sankey.txt`, upload it to https://sankeymatic.com/build/
+4. Once you have `sankey.txt`, upload it to https://sankeymatic.com/build/
 
 ![sankey chart example](./docs/sankey.jpeg)
 
@@ -117,7 +117,7 @@ e.g.
 1. 
 
 
-# Other Data sources
+# Data sources
 
 ## NH
 
